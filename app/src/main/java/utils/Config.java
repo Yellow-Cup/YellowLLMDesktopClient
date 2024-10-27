@@ -17,7 +17,7 @@ public abstract class Config {
     public static final int WINDOW_WIDTH = (int) (BASE_WINDOW_WIDTH * scale);
     public static final int WINDOW_HEIGHT = (int) ((BASE_WINDOW_HEIGHT * scale) + WINDOW_MENU_BAR_HEIGHT); 
 
-    public static final int BASE_MENU_ITEM_WIDTH = BASE_WINDOW_HEIGHT / 4;
+    public static final int BASE_MENU_ITEM_WIDTH = BASE_WINDOW_WIDTH / 4;
     public static final int BASE_MENU_ITEM_HEIGHT = 24;
 
     public static final int WINDOW_MENU_ITEM_WIDTH = (int) (BASE_MENU_ITEM_WIDTH * scale);
@@ -63,7 +63,7 @@ public abstract class Config {
 
     //-----
     // LLM
-    public static final String DEFAULT_LLM_CLIENT = "test";
+    public static final String DEFAULT_LLM_CLIENT = "OpenAI";
 
     //-----
     // Miscelaneous

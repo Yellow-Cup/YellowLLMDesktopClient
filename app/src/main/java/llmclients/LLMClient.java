@@ -1,16 +1,25 @@
 package llmclients;
 
+import java.util.HashMap;
+import utils.UserSettings;
+
 public abstract class LLMClient {
-    private String context = "";
-    private int interactionsCount = 0;
-    private int contextMaxInteractionsCount = 10;
+    protected String context = "";
+    protected int interactionsCount = 0;
+    protected int contextMaxInteractionsCount = 10;
+    protected HashMap<String, String> parameters = new HashMap<String, String>();
+    /*
+    * hasmap with parameters, values are defaults
+    */
 
-    public LLMClient() {
+    protected String name = "Dummy Client";
+    protected UserSettings properties;
 
+    public LLMClient(UserSettings properties) {
+        this.properties = properties;
     }
 
     public String request(String request) {
-        System.out.println(request);
         String response = Long.toString(System.currentTimeMillis()) + ": " + request;
 
         if (this.interactionsCount++ > this.contextMaxInteractionsCount) {
@@ -22,8 +31,16 @@ public abstract class LLMClient {
         return response;
     }
 
-    public void dropContext() {
+    public HashMap<String, String> getParameters() {
+        return this.parameters;
+    }
+
+    protected void dropContext() {
         this.context = "";
+    }
+
+    public String getName() {
+        return this.name;
     }
 
 }

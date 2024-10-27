@@ -9,12 +9,12 @@ import java.awt.Dimension;
 
 public class FontUtils {
     private static class FitMetrics {
-        Font font;
-        int containerWidth;
-        int stringWidth;
-        double coeff;
-        JComponent container;
-        String string;
+        private Font font;
+        private int containerWidth;
+        private int stringWidth;
+        private double coeff;
+        private JComponent container;
+        private String string;
 
         public FitMetrics(JComponent container, String string) {
             this.container = container;

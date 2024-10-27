@@ -1,27 +1,53 @@
 package controllers;
 
+import ui.UIMainWindow;
 import ui.UIUserInput;
 import ui.UIChatLog;
-import llmclients.LLMClient;
-import llmclients.LLMClientFactory;
+
 import utils.Config;
 
 
 public class ChatController {
 
-    public UIUserInput userInputUI;
-    public UIChatLog chatLogUI;
-    private LLMClient llmClient;
+    private UIUserInput userInputUI;
+    private UIChatLog chatLogUI;
+    private UIMainWindow hub;
 
-    public ChatController() {
-        this.llmClient = LLMClientFactory.produce(Config.DEFAULT_LLM_CLIENT);
+    private class LLMClientPoller implements Runnable {
+            private ChatController controller;
+            private String message;
+        public LLMClientPoller(ChatController controller, String message){
+            super();
+            this.controller = controller;
+            this.message = message;
+        }
+        public void run() {
+            String response = this.controller.getHub().getLLMClient().request(this.message);
+            this.controller.getChatLogUI().appendMessage(response, false);
+        }
+    }
+
+    public ChatController(UIMainWindow hub) {
+        this.hub = hub;
+        
         this.userInputUI = new UIUserInput(this);
-        this.chatLogUI = new UIChatLog(this);
+        this.chatLogUI = new UIChatLog();
     }
 
     public void handleUserMessage(String message) {
         this.chatLogUI.appendMessage(message, true);
-        String response = this.llmClient.request(message);
-        this.chatLogUI.appendMessage(response, false);
+        new Thread(new LLMClientPoller(this, message)).start();
+    }
+
+    public UIUserInput getUserInputUI() {
+        return this.userInputUI;
+    }
+
+    public UIChatLog getChatLogUI() {
+        return this.chatLogUI;
+    }
+
+    public UIMainWindow getHub() {
+        return this.hub;
     }
 }

@@ -14,21 +14,19 @@ import controllers.ChatController;
 import utils.Config;
 
 public class UIChatLog extends JPanel {
-    ChatController chatController;
-    JTextPane textPane;
-    JScrollPane scrollPane;
-    DefaultStyledDocument chatLog;
-    StyleContext styleContext;
-    Style userStyle, correspondentStyle;
-    GroupLayout layout;
+    private JTextPane textPane;
+    private JScrollPane scrollPane;
+    private DefaultStyledDocument chatLog;
+    private StyleContext styleContext;
+    private Style userStyle, correspondentStyle;
+    private GroupLayout layout;
 
-    public UIChatLog(ChatController chatController) {
+    public UIChatLog() {
         super();
-        this.chatController = chatController;
         this.setSize(Config.WINDOW_WIDTH, Config.CHAT_LOG_PANEL_HEIGHT);
 
         /**
-         * The hosing window is supposed to host two panels
+         * The hosting window is supposed to host two panels
          * of the same width: grpahic output and input controls.
          */
         this.styleContext = new StyleContext();
@@ -44,9 +42,36 @@ public class UIChatLog extends JPanel {
 
     }
 
+
+    public void appendMessage(String message, boolean isUser) {
+        Style style = correspondentStyle;
+        if (isUser)
+            style = userStyle;
+
+        int logLength = this.chatLog.getLength();
+
+        try {
+            this.chatLog.insertString(logLength, message + "\n\n", null);
+            this.chatLog.setParagraphAttributes(logLength, logLength, style, true);
+        } catch (BadLocationException e) {
+            new AppMessage("ERROR: " + e.getMessage());
+        }
+    }
+
+
+    public void clear() {
+        try {
+            this.chatLog.remove(0, this.chatLog.getLength());
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
     private void defineStyles() {
         Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
         StyleConstants.setForeground(defaultStyle, Config.DEFAULT_CHAT_LOG_TEXT_COLOR);
+        StyleConstants.setFontSize(defaultStyle, 14);
 
         this.userStyle = styleContext.addStyle("userStyle", defaultStyle);
         this.correspondentStyle = styleContext.addStyle("correspondentStyle", defaultStyle);
@@ -71,20 +96,5 @@ public class UIChatLog extends JPanel {
         this.layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addComponent(this.scrollPane));
-    }
-
-    public void appendMessage(String message, boolean isUser) {
-        Style style = correspondentStyle;
-        if (isUser)
-            style = userStyle;
-
-        int logLength = chatLog.getLength();
-
-        try {
-            this.chatLog.insertString(logLength, message + "\n\n", null);
-            this.chatLog.setParagraphAttributes(logLength, logLength, style, true);
-        } catch (BadLocationException e) {
-            new AppMessage("ERROR: " + e.getMessage()).popUp();
-        }
     }
 }

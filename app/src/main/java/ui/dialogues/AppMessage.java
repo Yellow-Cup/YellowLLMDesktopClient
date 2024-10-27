@@ -7,7 +7,7 @@ import utils.Config;
 
 
 public class AppMessage extends JFrame {
-    UIButton ackButton;
+    private UIButton ackButton;
 
     public AppMessage(String message) {
         super();
@@ -19,15 +19,15 @@ public class AppMessage extends JFrame {
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
 
-        ackButton = new UIButton("OK");
-        ackButton.setBounds(
+        this.ackButton = new UIButton("OK");
+        this.ackButton.setBounds(
             (int) (Config.DIALOGUE_DEFAULT_WIDTH / 2) - (Config.BUTTON_DEFAULT_WIDTH / 2),
             (int) (Config.DIALOGUE_DEFAULT_HEGHT - Config.BUTTON_DEFAULT_HEIGHT * 1.5),
             Config.BUTTON_DEFAULT_WIDTH,
             Config.BUTTON_DEFAULT_HEIGHT
         );
 
-        ackButton.addActionListener(
+        this.ackButton.addActionListener(
             (event) -> {
                 this.dispose();
             }
@@ -43,10 +43,7 @@ public class AppMessage extends JFrame {
         msgDisplay.setForeground(Config.DEFAULT_TEXT_COLOR);
         
         this.add(msgDisplay);
-        this.add(ackButton);
-    }
-
-    public void popUp() {
+        this.add(this.ackButton);
         this.setVisible(true);
     }
 

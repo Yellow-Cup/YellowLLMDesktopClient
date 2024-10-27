@@ -9,6 +9,8 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.GroupLayout;
+import javax.swing.text.DefaultCaret;
+
 import ui.dialogues.AppMessage;
 import controllers.ChatController;
 import utils.Config;
@@ -33,6 +35,8 @@ public class UIChatLog extends JPanel {
         this.chatLog = new DefaultStyledDocument(styleContext);
         this.textPane = new JTextPane(chatLog);
         this.textPane.setEditable(false);
+        DefaultCaret caret = (DefaultCaret)this.textPane.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         this.setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
         this.textPane.setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
@@ -52,7 +56,7 @@ public class UIChatLog extends JPanel {
 
         try {
             this.chatLog.insertString(logLength, message + "\n\n", null);
-            this.chatLog.setParagraphAttributes(logLength, logLength, style, true);
+            this.chatLog.setParagraphAttributes(logLength, this.chatLog.getLength(), style, true);
         } catch (BadLocationException e) {
             new AppMessage("ERROR: " + e.getMessage());
         }
@@ -87,7 +91,7 @@ public class UIChatLog extends JPanel {
         this.layout.setAutoCreateContainerGaps(true);
         this.layout.setAutoCreateGaps(true);
 
-        this.scrollPane = new JScrollPane(textPane);
+        this.scrollPane = new JScrollPane(this.textPane);
 
         this.layout.setHorizontalGroup(
             this.layout.createSequentialGroup()

@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import ui.dialogues.AppMessage;
 import ui.UIButton;
 import controllers.ChatController;
+import utils.FontUtils;
 import utils.Config;
 
 
@@ -25,7 +26,12 @@ public class UIUserInput extends JPanel {
     public UIUserInput(ChatController chatController) {
         super();
         this.chatController = chatController;
-        this.setSize(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT - Config.CHAT_LOG_PANEL_HEIGHT - Config.WINDOW_MENU_BAR_HEIGHT);
+        this.setSize(
+            this.chatController.getHub().getConfig().WINDOW_WIDTH,
+            this.chatController.getHub().getConfig().WINDOW_HEIGHT - 
+            this.chatController.getHub().getConfig().CHAT_LOG_PANEL_HEIGHT - 
+            this.chatController.getHub().getConfig().WINDOW_MENU_BAR_HEIGHT
+        );
         /** The hosting window is supposed to host two panels
         * of the same width: grpahic output and input controls.
         */
@@ -65,17 +71,26 @@ public class UIUserInput extends JPanel {
         this.userTextInputPane = new JScrollPane(userTextInput);
         this.userTextInput.addKeyListener(new SendKeyListener(this));
 
+        FontUtils.setContainerFontSize(this.userTextInput, this.chatController.getHub().getConfig().GENERAL_FONT_SIZE); 
 
 
-        this.clearTextButton = new UIButton("Clear", (int) Config.WINDOW_WIDTH / 6);
+        this.clearTextButton = new UIButton(
+            "Clear",
+            (int) this.chatController.getHub().getConfig().WINDOW_WIDTH / 6,
+            this.chatController.getHub()
+        );
         this.clearTextButton.addActionListener(
             (event) -> { 
                 this.clearUserTextInput();
             }
         );
 
-        this.sendButton = new UIButton("Send", (int) Config.WINDOW_WIDTH / 6);
-        this.sendButton.setHeight(Config.BUTTON_DEFAULT_HEIGHT * 3);
+        this.sendButton = new UIButton(
+            "Send",
+            (int) this.chatController.getHub().getConfig().WINDOW_WIDTH / 6,
+            this.chatController.getHub()
+        );
+        this.sendButton.setHeight(this.chatController.getHub().getConfig().BUTTON_DEFAULT_HEIGHT * 3);
         this.sendButton.addActionListener(
             (event) -> {
                 this.sendMessage();
@@ -107,7 +122,7 @@ public class UIUserInput extends JPanel {
             this.chatController.handleUserMessage(message);
             this.clearUserTextInput();
         } else {
-            new AppMessage("Nothing to send. Type something, dummy!");
+            new AppMessage("Nothing to send. Type something, dummy!", this.chatController.getHub());
         }
     }
 

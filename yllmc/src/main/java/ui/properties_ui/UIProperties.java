@@ -15,8 +15,8 @@ import java.util.Set;
 import ui.UIButton;
 import ui.dialogues.AppMessage;
 import utils.UserSettings;
-import utils.Config;
-
+import ui.UIMainWindow;
+import utils.FontUtils;
 
 public class UIProperties extends JFrame{
 
@@ -27,32 +27,32 @@ public class UIProperties extends JFrame{
     private UIButton saveButton, saveCloseButton, closeButton;
     private HashMap<String, String> defaults;
     private Set<String> propertiesKeys;
-    private UserSettings propertiesInstance;
+    private UIMainWindow hub;
     private String title = "Properties";
  
-    public UIProperties(Set<String> propertiesKeys, UserSettings propertiesInstance) {
+    public UIProperties(Set<String> propertiesKeys, UIMainWindow hub) {
         super();
+        this.hub = hub;
         this.propertiesKeys = propertiesKeys;
-        this.propertiesInstance = propertiesInstance;
         this.defaults = new HashMap<String, String>();
         this.buildUI();
     }
 
 
-    public UIProperties(HashMap<String, String> defaults, UserSettings propertiesInstance) {
+    public UIProperties(HashMap<String, String> defaults, UIMainWindow hub) {
         super();
+        this.hub = hub;
         this.propertiesKeys = defaults.keySet();
         this.defaults = defaults;
-        this.propertiesInstance = propertiesInstance;
         this.buildUI();
     }
 
 
     private void buildUI() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setMinimumSize(new Dimension(Config.WINDOW_WIDTH, 0));
-        this.setMaximumSize(new Dimension(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT));
-        this.getContentPane().setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
+        this.setMinimumSize(new Dimension(this.hub.getConfig().WINDOW_WIDTH, 0));
+        this.setMaximumSize(new Dimension(this.hub.getConfig().WINDOW_WIDTH, this.hub.getConfig().WINDOW_HEIGHT));
+        this.getContentPane().setBackground(this.hub.getConfig().DEFAULT_WINDOW_BACKGROUND);
         this.setTitle(this.title);
 
         this.layoutGeneral = new GroupLayout(this.getContentPane());
@@ -62,21 +62,21 @@ public class UIProperties extends JFrame{
 
         this.buildPropertiesPanel();
 
-        this.saveButton = new UIButton("Save");
+        this.saveButton = new UIButton("Save", this.hub);
         this.saveButton.addActionListener(
             (event) -> {
-                this.propertiesInstance.saveSettings();
-                new AppMessage("Settings saved. :)");
+                this.hub.getUserSettings().saveSettings();
+                new AppMessage("Settings saved. :)", this.hub);
             }
         );
-        this.saveCloseButton = new UIButton("Save and Close");
+        this.saveCloseButton = new UIButton("Save and Close", this.hub);
         this.saveCloseButton.addActionListener(
             (event) -> {
-                this.propertiesInstance.saveSettings();
+                this.hub.getUserSettings().saveSettings();
                 this.dispose();
             }
         );
-        this.closeButton = new UIButton("Close w/o saving");
+        this.closeButton = new UIButton("Close w/o saving", this.hub);
         this.closeButton.addActionListener(
             (event) -> {
                 this.dispose();
@@ -124,12 +124,12 @@ public class UIProperties extends JFrame{
 
         @Override
         public void insertUpdate(DocumentEvent event){
-            this.parent.propertiesInstance.setProperty(propertyName, textField.getText());
+            this.parent.hub.getUserSettings().setProperty(propertyName, textField.getText());
         }
 
         @Override
         public void removeUpdate(DocumentEvent event){
-            this.parent.propertiesInstance.setProperty(propertyName, textField.getText());
+            this.parent.hub.getUserSettings().setProperty(propertyName, textField.getText());
         }
 
         @Override
@@ -141,8 +141,8 @@ public class UIProperties extends JFrame{
     private void buildPropertiesPanel() {
         this.propertiesPanel = new JPanel();
         this.layout4Properties = new BoxLayout(this.propertiesPanel, BoxLayout.Y_AXIS);
-        this.propertiesPanel.setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
-        this.propertiesPanel.setForeground(Config.DEFAULT_TEXT_COLOR);
+        this.propertiesPanel.setBackground(this.hub.getConfig().DEFAULT_WINDOW_BACKGROUND);
+        this.propertiesPanel.setForeground(this.hub.getConfig().DEFAULT_TEXT_COLOR);
         this.scrollPane = new JScrollPane(this.propertiesPanel);
 
         this.propertiesPanel.setLayout(this.layout4Properties);
@@ -150,21 +150,25 @@ public class UIProperties extends JFrame{
 
         for (String propertyName : this.propertiesKeys) {
             JLabel label = new JLabel(propertyName);
-            label.setForeground(Config.DEFAULT_TEXT_COLOR);
+            label.setForeground(this.hub.getConfig().DEFAULT_TEXT_COLOR);
             label.setAlignmentX(0.0f);
-            String value = this.propertiesInstance.getProperty(
+            String value = this.hub.getUserSettings().getProperty(
                 propertyName,
                 this.defaults.getOrDefault(propertyName, "").toString()
             );
 
             if (value != "") {
-                this.propertiesInstance.setProperty(propertyName, value); // to work the defaults if provided
+                this.hub.getUserSettings().setProperty(propertyName, value); // to work the defaults if provided
             }
             
+            FontUtils.setContainerFontSize(label, this.hub.getConfig().GENERAL_FONT_SIZE);
+    
             JTextField textField = new JTextField(value);
             textField.getDocument().addDocumentListener(
                 new propertyTextFieldListener(propertyName, textField, this)
             );
+
+            FontUtils.setContainerFontSize(textField, this.hub.getConfig().GENERAL_FONT_SIZE);
 
             this.propertiesPanel.add(label);
             this.propertiesPanel.add(textField);

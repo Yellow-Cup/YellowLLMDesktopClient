@@ -13,18 +13,27 @@ public class UIMainWindow extends JFrame {
     private LLMClient llmClient;
     private UIMenuBar menuBar;
     private UserSettings userSettings;
+    private Config config;
 
 
-    public UIMainWindow() {
+    public UIMainWindow(Config config) {
         super();
+        this.config = config;
         this.initComponents();
-        this.setSize(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT);
+        //this.setSize(this.config.WINDOW_WIDTH, this.config.WINDOW_HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.getContentPane().setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
-        this.setLocationRelativeTo(null);
+        this.getContentPane().setBackground(this.config.DEFAULT_WINDOW_BACKGROUND);
 
         this.buildUI();
         this.setVisible(true);
+        this.setSize(
+            this.config.WINDOW_WIDTH,
+            this.config.WINDOW_HEIGHT
+            + this.getInsets().top
+            + this.getInsets().bottom
+            + this.menuBar.getHeight()
+        );
+        this.setLocationRelativeTo(null);
         this.chatController.getUserInputUI().focusOnInput();
     }
 
@@ -44,9 +53,13 @@ public class UIMainWindow extends JFrame {
     }
 
 
+    public Config getConfig() {
+        return this.config;
+    }
+
     private void initComponents() {
-        this.userSettings = new UserSettings();
-        this.llmClient = LLMClientFactory.produce(Config.DEFAULT_LLM_CLIENT, this.userSettings);
+        this.userSettings = new UserSettings(this);
+        this.llmClient = LLMClientFactory.produce(this.config.DEFAULT_LLM_CLIENT, this.userSettings);
         this.chatController = new ChatController(this);
     }
 
@@ -55,15 +68,21 @@ public class UIMainWindow extends JFrame {
         this.setLayout(null);
         this.menuBar = new UIMenuBar(this);
 
-        this.chatController.getChatLogUI().setBounds(0,
+        this.chatController.getChatLogUI()
+            .setBounds(
+                0,
                 this.menuBar.getHeight(),
                 this.chatController.getChatLogUI().getWidth(),
-                this.chatController.getChatLogUI().getHeight());
+                this.chatController.getChatLogUI().getHeight()
+            );
 
-        this.chatController.getUserInputUI().setBounds(
+        this.chatController.getUserInputUI()
+            .setBounds(
                 0,
-                Config.CHAT_LOG_PANEL_HEIGHT + this.menuBar.getHeight(),
-                chatController.getUserInputUI().getWidth(), chatController.getUserInputUI().getHeight() - this.menuBar.getHeight());
+                this.config.CHAT_LOG_PANEL_HEIGHT + this.menuBar.getHeight(),
+                chatController.getUserInputUI().getWidth(),
+                chatController.getUserInputUI().getHeight() - this.menuBar.getHeight()
+            );
 
         this.setJMenuBar(this.menuBar);
         this.add(this.chatController.getChatLogUI());

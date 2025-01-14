@@ -13,7 +13,6 @@ import javax.swing.text.DefaultCaret;
 
 import ui.dialogues.AppMessage;
 import controllers.ChatController;
-import utils.Config;
 
 public class UIChatLog extends JPanel {
     private JTextPane textPane;
@@ -22,10 +21,12 @@ public class UIChatLog extends JPanel {
     private StyleContext styleContext;
     private Style userStyle, correspondentStyle;
     private GroupLayout layout;
+    private ChatController chatController;
 
-    public UIChatLog() {
+    public UIChatLog(ChatController chatController) {
         super();
-        this.setSize(Config.WINDOW_WIDTH, Config.CHAT_LOG_PANEL_HEIGHT);
+        this.chatController = chatController;
+        this.setSize(this.chatController.getHub().getConfig().WINDOW_WIDTH, this.chatController.getHub().getConfig().CHAT_LOG_PANEL_HEIGHT);
 
         /**
          * The hosting window is supposed to host two panels
@@ -38,8 +39,8 @@ public class UIChatLog extends JPanel {
         DefaultCaret caret = (DefaultCaret)this.textPane.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        this.setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
-        this.textPane.setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
+        this.setBackground(this.chatController.getHub().getConfig().DEFAULT_WINDOW_BACKGROUND);
+        this.textPane.setBackground(this.chatController.getHub().getConfig().DEFAULT_WINDOW_BACKGROUND);
 
         this.defineStyles();
         this.buildChatLogUI();
@@ -58,7 +59,7 @@ public class UIChatLog extends JPanel {
             this.chatLog.insertString(logLength, message + "\n\n", null);
             this.chatLog.setParagraphAttributes(logLength, this.chatLog.getLength(), style, true);
         } catch (BadLocationException e) {
-            new AppMessage("ERROR: " + e.getMessage());
+            new AppMessage("ERROR: " + e.getMessage(), this.chatController.getHub());
         }
     }
 
@@ -74,15 +75,15 @@ public class UIChatLog extends JPanel {
 
     private void defineStyles() {
         Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
-        StyleConstants.setForeground(defaultStyle, Config.DEFAULT_CHAT_LOG_TEXT_COLOR);
-        StyleConstants.setFontSize(defaultStyle, 14);
+        StyleConstants.setForeground(defaultStyle, this.chatController.getHub().getConfig().DEFAULT_CHAT_LOG_TEXT_COLOR);
+        StyleConstants.setFontSize(defaultStyle, this.chatController.getHub().getConfig().GENERAL_FONT_SIZE);
 
         this.userStyle = styleContext.addStyle("userStyle", defaultStyle);
         this.correspondentStyle = styleContext.addStyle("correspondentStyle", defaultStyle);
 
         StyleConstants.setBold(userStyle, true);
-        StyleConstants.setRightIndent(userStyle, Config.DEFAULT_TEXT_INDENT);
-        StyleConstants.setLeftIndent(correspondentStyle, Config.DEFAULT_TEXT_INDENT);
+        StyleConstants.setRightIndent(userStyle, this.chatController.getHub().getConfig().DEFAULT_TEXT_INDENT);
+        StyleConstants.setLeftIndent(correspondentStyle, this.chatController.getHub().getConfig().DEFAULT_TEXT_INDENT);
     }
 
     private void buildChatLogUI() {

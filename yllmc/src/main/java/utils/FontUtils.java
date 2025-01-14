@@ -6,6 +6,7 @@ import exceptions.fontutils.NoContainerWidthRuntimeException;
 
 import java.awt.Font;
 import java.awt.Dimension;
+import utils.Config;
 
 public class FontUtils {
     private static class FitMetrics {
@@ -15,10 +16,12 @@ public class FontUtils {
         private double coeff;
         private JComponent container;
         private String string;
+        private Config config;
 
-        public FitMetrics(JComponent container, String string) {
+        public FitMetrics(JComponent container, String string, Config config) {
             this.container = container;
             this.string = string;
+            this.config = config;
             containerWidth = container.getWidth();
 
             if (containerWidth < 1) {
@@ -28,10 +31,11 @@ public class FontUtils {
             this.calculate();
         }
 
-        public FitMetrics(JComponent container, String string, int containerWidth) {
+        public FitMetrics(JComponent container, String string, int containerWidth, Config config) {
             this.container = container;
             this.string = string;
             this.containerWidth = containerWidth;
+            this.config = config;
 
             this.calculate();
         }
@@ -39,7 +43,7 @@ public class FontUtils {
         private void calculate() {
             this.font = this.container.getFont();
             this.stringWidth = this.container.getFontMetrics(this.font).stringWidth(this.string);
-            this.coeff = (double) this.containerWidth / ((double) this.stringWidth + Config.FONT_FIT_SIDES_MARGIN * 2);
+            this.coeff = (double) this.containerWidth / ((double) this.stringWidth + this.config.FONT_FIT_SIDES_MARGIN * 2);
         }
 
     }
@@ -55,14 +59,14 @@ public class FontUtils {
     }
 
 
-    public static void fitFont(JComponent container, String string) {
-        FitMetrics preMetrics = new FitMetrics(container, string);
+    public static void fitFont(JComponent container, String string, Config config) {
+        FitMetrics preMetrics = new FitMetrics(container, string, config);
 
         FontUtils.resizeFont(preMetrics, container);
     }
 
-    public static void fitFont(JComponent container, String string, int containerWidth) {
-        FitMetrics preMetrics = new FitMetrics(container, string, containerWidth);
+    public static void fitFont(JComponent container, String string, int containerWidth, Config config) {
+        FitMetrics preMetrics = new FitMetrics(container, string, containerWidth, config);
 
         FontUtils.resizeFont(preMetrics, container);
     }
@@ -74,16 +78,27 @@ public class FontUtils {
     }
 
 
-    public static void fitContainer(JComponent container, String string) {
-        FitMetrics preMetrics = new FitMetrics(container, string);
+    public static void fitContainer(JComponent container, String string, Config config) {
+        FitMetrics preMetrics = new FitMetrics(container, string, config);
 
         FontUtils.resizeContainer(preMetrics, container);
     }
 
-    public static void fitContainer(JComponent container, String string, int containerWidth) {
-        FitMetrics preMetrics = new FitMetrics(container, string, containerWidth);
+    public static void fitContainer(JComponent container, String string, int containerWidth, Config config) {
+        FitMetrics preMetrics = new FitMetrics(container, string, containerWidth, config);
 
         FontUtils.resizeContainer(preMetrics, container);
+    }
+
+    public static void setContainerFontSize(JComponent container, int fontSize) {
+        Font font = container.getFont();
+        container.setFont(
+            new Font(
+                font.getName(),
+                Font.PLAIN,
+                fontSize
+            )
+        );
     }
 
 }

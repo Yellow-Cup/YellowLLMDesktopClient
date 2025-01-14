@@ -3,28 +3,28 @@ package ui.dialogues;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import ui.UIButton;
-import utils.Config;
+import ui.UIMainWindow;
 
 
 public class AppMessage extends JFrame {
     private UIButton ackButton;
 
-    public AppMessage(String message) {
+    public AppMessage(String message, UIMainWindow hub) {
         super();
-        this.setSize(Config.DIALOGUE_DEFAULT_WIDTH, Config.DIALOGUE_DEFAULT_HEGHT);
+        this.setSize(hub.getConfig().DIALOGUE_DEFAULT_WIDTH, hub.getConfig().DIALOGUE_DEFAULT_HEGHT);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLayout(null);
-        this.getContentPane().setBackground(Config.DEFAULT_WINDOW_BACKGROUND);
-        this.setTitle(Config.MESSAGES_WINDOW_TITLE);
+        this.getContentPane().setBackground(hub.getConfig().DEFAULT_WINDOW_BACKGROUND);
+        this.setTitle(hub.getConfig().MESSAGES_WINDOW_TITLE);
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
 
-        this.ackButton = new UIButton("OK");
+        this.ackButton = new UIButton("OK", hub);
         this.ackButton.setBounds(
-            (int) (Config.DIALOGUE_DEFAULT_WIDTH / 2) - (Config.BUTTON_DEFAULT_WIDTH / 2),
-            (int) (Config.DIALOGUE_DEFAULT_HEGHT - Config.BUTTON_DEFAULT_HEIGHT * 1.5),
-            Config.BUTTON_DEFAULT_WIDTH,
-            Config.BUTTON_DEFAULT_HEIGHT
+            (int) (hub.getConfig().DIALOGUE_DEFAULT_WIDTH / 2) - (hub.getConfig().BUTTON_DEFAULT_WIDTH / 2),
+            (int) (hub.getConfig().DIALOGUE_DEFAULT_HEGHT - hub.getConfig().BUTTON_DEFAULT_HEIGHT * 1.5),
+            hub.getConfig().BUTTON_DEFAULT_WIDTH,
+            hub.getConfig().BUTTON_DEFAULT_HEIGHT
         );
 
         this.ackButton.addActionListener(
@@ -35,12 +35,12 @@ public class AppMessage extends JFrame {
 
         JLabel msgDisplay = new JLabel(message);
         msgDisplay.setBounds(
-            (int) (Config.BUTTON_DEFAULT_WIDTH / 2),
-            (int) (Config.BUTTON_DEFAULT_HEIGHT / 2),
-            (int) (Config.DIALOGUE_DEFAULT_WIDTH - Config.BUTTON_DEFAULT_WIDTH / 2),
-            (int) (Config.DIALOGUE_DEFAULT_HEGHT - Config.BUTTON_DEFAULT_HEIGHT * 2)
+            (int) (hub.getConfig().BUTTON_DEFAULT_WIDTH / 2),
+            (int) (hub.getConfig().BUTTON_DEFAULT_HEIGHT / 2),
+            (int) (hub.getConfig().DIALOGUE_DEFAULT_WIDTH - hub.getConfig().BUTTON_DEFAULT_WIDTH / 2),
+            (int) (hub.getConfig().DIALOGUE_DEFAULT_HEGHT - hub.getConfig().BUTTON_DEFAULT_HEIGHT * 2)
         );
-        msgDisplay.setForeground(Config.DEFAULT_TEXT_COLOR);
+        msgDisplay.setForeground(hub.getConfig().DEFAULT_TEXT_COLOR);
         
         this.add(msgDisplay);
         this.add(this.ackButton);

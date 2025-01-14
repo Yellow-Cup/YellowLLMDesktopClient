@@ -4,8 +4,6 @@ import ui.UIMainWindow;
 import ui.UIUserInput;
 import ui.UIChatLog;
 
-import utils.Config;
-
 
 public class ChatController {
 
@@ -31,7 +29,7 @@ public class ChatController {
         this.hub = hub;
         
         this.userInputUI = new UIUserInput(this);
-        this.chatLogUI = new UIChatLog();
+        this.chatLogUI = new UIChatLog(this);
     }
 
     public void handleUserMessage(String message) {

@@ -1,9 +1,11 @@
 import ui.UIMainWindow;
-
-import org.json.JSONObject;
+import utils.Config;
 
 class yllmc {
     public static void main(String[] args) {
-        new UIMainWindow();
+        Config config = new Config();
+        new UIMainWindow(
+            config
+        );
     }
 }

@@ -2,28 +2,42 @@ package ui;
 
 import javax.swing.JButton;
 import java.awt.Dimension;
-import utils.Config;
+import ui.UIMainWindow;
 import utils.FontUtils;
 
 public class UIButton extends JButton {
 
-    public UIButton(String text) {
+    private UIMainWindow hub;
+
+    public UIButton(String text, UIMainWindow hub) {
         super(text);
+        this.hub = hub;
         this.init();
 
-        this.setSize(Config.BUTTON_DEFAULT_WIDTH, Config.BUTTON_DEFAULT_HEIGHT);
-        this.setMinimumSize(new Dimension(Config.BUTTON_DEFAULT_WIDTH, Config.BUTTON_DEFAULT_HEIGHT));
+        this.setSize(this.hub.getConfig().BUTTON_DEFAULT_WIDTH, this.hub.getConfig().BUTTON_DEFAULT_HEIGHT);
+        this.setMinimumSize(
+            new Dimension(
+                this.hub.getConfig().BUTTON_DEFAULT_WIDTH,
+                this.hub.getConfig().BUTTON_DEFAULT_HEIGHT
+            )
+        );
+        FontUtils.setContainerFontSize(this, this.hub.getConfig().GENERAL_FONT_SIZE);
 
-        FontUtils.fitContainer(this, text);
+        FontUtils.fitContainer(this, text, this.hub.getConfig());
     }
 
-    public UIButton(String text, int width) {
+    public UIButton(String text, int width, UIMainWindow hub) {
         super(text);
+        this.hub = hub;
         this.init();
 
-        this.setSize(width, Config.BUTTON_DEFAULT_HEIGHT);
-        this.setMinimumSize(new Dimension(width, Config.BUTTON_DEFAULT_HEIGHT));
-        FontUtils.fitFont(this, text);
+        this.setSize(width, this.hub.getConfig().BUTTON_DEFAULT_HEIGHT);
+        this.setMinimumSize(
+            new Dimension(
+                width,
+                this.hub.getConfig().BUTTON_DEFAULT_HEIGHT)
+            );
+        FontUtils.fitFont(this, text, this.hub.getConfig());
     }
 
     public void setWidth(int width) {
@@ -37,9 +51,9 @@ public class UIButton extends JButton {
     }
 
     private void init() {
-        this.setBackground(Config.DEFAULT_TEXT_COLOR);
-        this.setBorder(Config.DEFAULT_BUTTON_BORDER);
-        this.setFocusPainted(Config.FOCUSED_BUTTON_TEXT_IS_BORDERED);
+        this.setBackground(this.hub.getConfig().DEFAULT_TEXT_COLOR);
+        this.setBorder(this.hub.getConfig().DEFAULT_BUTTON_BORDER);
+        this.setFocusPainted(this.hub.getConfig().FOCUSED_BUTTON_TEXT_IS_BORDERED);
     }
 
     public void setBounds(int x, int y) {
